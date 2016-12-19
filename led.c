@@ -102,7 +102,7 @@ static int __init init_led(void)
 		pr_err("%s: device_create() failed.\n", MODULE_NAME);
 		ret = PTR_ERR(led_device);
 		goto dev_err;
-	}	
+	}
 
 	iomap = ioremap(GPIO_BASE, GPIO_REGION_SIZE);
 	if (!iomap) {
@@ -126,13 +126,13 @@ remap_err:
 	device_destroy(led_class, devt);
 dev_err:
 	class_unregister(led_class);
-	class_destroy(led_class);	
+	class_destroy(led_class);
 class_err:
 	cdev_del(&led_cdev);
 cdev_err:
 	unregister_chrdev_region(devt, NUM_DEVICES);
 out:
-	return ret;	
+	return ret;
 }
 
 static void __exit exit_led(void)
@@ -142,7 +142,7 @@ static void __exit exit_led(void)
 	iounmap(iomap);
 	device_destroy(led_class, devt);
 	class_unregister(led_class);
-	class_destroy(led_class);	
+	class_destroy(led_class);
 	cdev_del(&led_cdev);
 	unregister_chrdev_region(devt, NUM_DEVICES);
 	pr_info("%s: Module unloaded\n", MODULE_NAME);
