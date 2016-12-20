@@ -42,7 +42,7 @@ static int led_release(struct inode *inodep, struct file *filep);
 /*
  * Helper functions
  */
-static bool is_gpio_valid(int gpio);
+static bool is_gpio_valid(void);
 static void pin_direction_output(void);
 static void set_pin(void);
 static void unset_pin(void);
@@ -79,7 +79,7 @@ static int __init init_led(void)
 {
 	int ret;
 
-	if (!is_gpio_valid(gpio_num)) {
+	if (!is_gpio_valid()) {
 		pr_err("Invalid GPIO (%d)\n", gpio_num);
 		ret = -EINVAL;
 		goto out;
@@ -211,9 +211,9 @@ led_write(struct file *filep, const char __user *buf, size_t len, loff_t *off)
 	return BUF_SIZE;
 }
 
-static bool is_gpio_valid(int gpio)
+static bool is_gpio_valid(void)
 {
-	return 0 <= gpio && gpio < NUM_GPIOS;
+	return 0 <= gpio_num && gpio_num < NUM_GPIOS;
 }
 
 static void pin_direction_output(void)
@@ -222,7 +222,7 @@ static void pin_direction_output(void)
 
 	val = ioread32(iomap + func_select_reg_offset);
 	func_select_initial_val = val;
-	val &= ~(7 << func_select_bit_offset);
+	val &= ~(6 << func_select_bit_offset);
 	val |= 1 << func_select_bit_offset;
 	iowrite32(val, iomap + func_select_reg_offset);
 }
