@@ -5,7 +5,7 @@ physical address of a GPIO and manipulates the respective bits in order to turn
 the LED ON or OFF.
 
 This driver is compiled and tested on Raspberry Pi 3 Model B running Raspbian
-(Linux raspberrypi 4.4.34-v7+ #930). The LED is connected to the Pi via a
+(Linux raspberrypi 4.4.38-v7+ #938). The LED is connected to the Pi via a
 breadboard.
 
 ## Using the Driver
