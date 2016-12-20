@@ -55,6 +55,7 @@ static int func_select_bit_offset;
 static int rw_reg_offset;
 static int rw_bit_offset;
 static char pin_value[BUF_SIZE] = "";
+static int func_select_initial_val;
 
 static struct file_operations fops = {
 	.owner = THIS_MODULE,
@@ -118,6 +119,7 @@ static int __init init_led(void)
 	rw_reg_offset = 4 * (gpio_num / 32);
 	rw_bit_offset = gpio_num % 32;
 
+	pin_direction_output();
 	mutex_init(&led_mutex);
 	pr_info("%s: Module loaded\n", MODULE_NAME);
 	goto out;
@@ -138,6 +140,7 @@ out:
 static void __exit exit_led(void)
 {
 	unset_pin();
+	iowrite32(func_select_initial_val, iomap + func_select_reg_offset);
 	mutex_destroy(&led_mutex);
 	iounmap(iomap);
 	device_destroy(led_class, devt);
@@ -151,7 +154,6 @@ static void __exit exit_led(void)
 static int led_open(struct inode *inodep, struct file *filep)
 {
 	mutex_lock(&led_mutex);
-	pin_direction_output();
 	return 0;
 }
 
@@ -205,6 +207,7 @@ static void pin_direction_output(void)
 	int val;
 
 	val = ioread32(iomap + func_select_reg_offset);
+	func_select_initial_val = val;
 	val &= ~(7 << func_select_bit_offset);
 	val |= 1 << func_select_bit_offset;
 	iowrite32(val, iomap + func_select_reg_offset);
