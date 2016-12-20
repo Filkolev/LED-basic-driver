@@ -215,20 +215,12 @@ static void pin_direction_output(void)
 
 static void set_pin(void)
 {
-	int val;
-
-	val = ioread32(iomap + GPSET_OFFSET + rw_reg_offset);
-	val |= 1 << rw_bit_offset;
-	iowrite32(val, iomap + GPSET_OFFSET + rw_reg_offset);
+	iowrite32(1 << rw_bit_offset, iomap + GPSET_OFFSET + rw_reg_offset);
 }
 
 static void unset_pin(void)
 {
-	int val;
-
-	val = ioread32(iomap + GPCLR_OFFSET + rw_reg_offset);
-	val |= 1 << rw_bit_offset;
-	iowrite32(val, iomap + GPCLR_OFFSET + rw_reg_offset);
+	iowrite32(1 << rw_bit_offset, iomap + GPCLR_OFFSET + rw_reg_offset);
 }
 
 static void read_pin(void)
