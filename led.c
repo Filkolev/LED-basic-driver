@@ -51,6 +51,14 @@ static dev_t devt;
 static struct cdev led_cdev;
 static struct class *led_class;
 static struct device *led_device;
+
+/* 
+ * iomap will point to the first GPIO register. Since this is a void pointer,
+ * incrementing it will increment the address by one byte.
+ * Strictly speaking, such arithmetic is not defined in the C standard; it is
+ * allowed by GCC by means of an extension.
+ * See: https://gcc.gnu.org/onlinedocs/gcc/Pointer-Arith.html
+ */
 static void __iomem *iomap;
 static int func_select_reg_offset;
 static int func_select_bit_offset;
