@@ -52,7 +52,7 @@ All registers are 32 bits wide; a more detailed description follows.
 
 ### Function Select Registers
 
-There are 6 function select registers, called GPFSEL_n_, where n is in the range
+There are 6 function select registers, called GPFSEL*n*, where n is in the range
 0-5.
 
 Each GPIO occupies 3 bits, therefore each 32-bit register contains 10 triplets
@@ -115,6 +115,6 @@ For example, to read the value of pin 6, we check the value of bit 6 of GPLEV0.
 GPLEV0 is responsible for pins 0-31, GPLEV1 is responsible for pins 32-53 (bits
 0-21; bits 22-31 are reserved). Refer to tables 6-12 and 6-13 on
 [page 96, BCM2835 ARM Peripherals](https://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf#page=96).
-**NB** The tables are wrong as they show that a value "0" reflects both high and
+**NB:** The tables are wrong as they show that a value "0" reflects both high and
 low levels, which is clearly not possible. A "0" means low, while "1" means the
 pin is high.
