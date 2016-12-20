@@ -1,13 +1,10 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/init.h>
-#include <linux/gpio.h>
 #include <linux/mutex.h>
 #include <linux/fs.h>
 #include <linux/cdev.h>
-#include <linux/ioport.h>
 #include <linux/device.h>
-#include <linux/mm.h>
 #include <asm/io.h>
 #include <asm/uaccess.h>
 
