@@ -54,8 +54,6 @@ static struct device *led_device;
 static void __iomem *iomap;
 static int func_select_reg_offset;
 static int func_select_bit_offset;
-static int rw_reg_offset;
-static int rw_bit_offset;
 static char pin_value[BUF_SIZE] = "";
 static int func_select_initial_val;
 
@@ -123,9 +121,6 @@ static int __init init_led(void)
 	/* TODO: Explain this and extract to separate function */
 	func_select_reg_offset = 4 * (gpio_num / 10);
 	func_select_bit_offset = (gpio_num % 10) * 3;
-
-	rw_reg_offset = 4 * (gpio_num / 32);
-	rw_bit_offset = gpio_num % 32;
 
 	save_gpio_func_select();
 	pin_direction_output();
@@ -247,20 +242,20 @@ static void pin_direction_output(void)
 
 static void set_pin(void)
 {
-	iowrite32(1 << rw_bit_offset, iomap + GPSET_OFFSET + rw_reg_offset);
+	iowrite32(1 << gpio_num, iomap + GPSET_OFFSET);
 }
 
 static void unset_pin(void)
 {
-	iowrite32(1 << rw_bit_offset, iomap + GPCLR_OFFSET + rw_reg_offset);
+	iowrite32(1 << gpio_num, iomap + GPCLR_OFFSET);
 }
 
 static void read_pin(void)
 {
 	int val;
 
-	val = ioread32(iomap + GPLEV_OFFSET + rw_reg_offset);
-	val = (val >> rw_bit_offset) & 1;
+	val = ioread32(iomap + GPLEV_OFFSET);
+	val = (val >> gpio_num) & 1;
 	pin_value[0] = val ? '1' : '0';
 }
 
