@@ -40,6 +40,8 @@ static int led_release(struct inode *inodep, struct file *filep);
  * Helper functions
  */
 static bool is_gpio_valid(void);
+static void save_gpio_func_select(void);
+static void restore_gpio_func_select(void);
 static void pin_direction_output(void);
 static void set_pin(void);
 static void unset_pin(void);
@@ -125,7 +127,9 @@ static int __init init_led(void)
 	rw_reg_offset = 4 * (gpio_num / 32);
 	rw_bit_offset = gpio_num % 32;
 
+	save_gpio_func_select();
 	pin_direction_output();
+
 	mutex_init(&led_mutex);
 	pr_info("%s: Module loaded\n", MODULE_NAME);
 	goto out;
@@ -146,7 +150,7 @@ out:
 static void __exit exit_led(void)
 {
 	unset_pin();
-	iowrite32(func_select_initial_val, iomap + func_select_reg_offset);
+	restore_gpio_func_select();
 	mutex_destroy(&led_mutex);
 	iounmap(iomap);
 	device_destroy(led_class, devt);
@@ -213,12 +217,29 @@ static bool is_gpio_valid(void)
 	return 0 <= gpio_num && gpio_num < NUM_GPIOS;
 }
 
+static void save_gpio_func_select(void)
+{
+	int val;
+
+	val = ioread32(iomap + func_select_reg_offset);
+	func_select_initial_val = (val >> func_select_bit_offset) & 7;
+}
+
+static void restore_gpio_func_select(void)
+{
+	int val;
+
+	val = ioread32(iomap + func_select_reg_offset);
+	val &= ~(7 << func_select_bit_offset);
+	val |= func_select_initial_val << func_select_bit_offset;
+	iowrite32(val, iomap + func_select_reg_offset);
+}
+
 static void pin_direction_output(void)
 {
 	int val;
 
 	val = ioread32(iomap + func_select_reg_offset);
-	func_select_initial_val = val;
 	val &= ~(6 << func_select_bit_offset);
 	val |= 1 << func_select_bit_offset;
 	iowrite32(val, iomap + func_select_reg_offset);
