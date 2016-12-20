@@ -19,6 +19,8 @@
 #define GPLEV_OFFSET 0x34
 
 #define GPIO_DEFAULT 6
+#define NUM_GPIOS 28
+
 #define HIGH 1
 #define LOW 0
 #define MODULE_NAME "simple-led"
@@ -40,6 +42,7 @@ static int led_release(struct inode *inodep, struct file *filep);
 /*
  * Helper functions
  */
+static bool is_gpio_valid(int gpio);
 static void pin_direction_output(void);
 static void set_pin(void);
 static void unset_pin(void);
@@ -75,6 +78,12 @@ MODULE_PARM_DESC(gpio_num, "The gpio where the LED is connected (default = 6)");
 static int __init init_led(void)
 {
 	int ret;
+
+	if (!is_gpio_valid(gpio_num)) {
+		pr_err("Invalid GPIO (%d)\n", gpio_num);
+		ret = -EINVAL;
+		goto out;
+	}
 
 	ret = alloc_chrdev_region(&devt, 0, NUM_DEVICES, MODULE_NAME);
 	if (ret) {
@@ -200,6 +209,11 @@ led_write(struct file *filep, const char __user *buf, size_t len, loff_t *off)
 	}
 
 	return BUF_SIZE;
+}
+
+static bool is_gpio_valid(int gpio)
+{
+	return 0 <= gpio && gpio < NUM_GPIOS;
 }
 
 static void pin_direction_output(void)
