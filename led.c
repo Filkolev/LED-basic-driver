@@ -77,7 +77,7 @@ static int __init init_led(void)
 	int ret;
 
 	if (!is_gpio_valid()) {
-		pr_err("Invalid GPIO (%d)\n", gpio_num);
+		pr_err("%s: Invalid GPIO (%d)\n", MODULE_NAME, gpio_num);
 		ret = -EINVAL;
 		goto out;
 	}
@@ -118,7 +118,6 @@ static int __init init_led(void)
 		goto remap_err;
 	}
 
-	/* TODO: Explain this and extract to separate function */
 	func_select_reg_offset = 4 * (gpio_num / 10);
 	func_select_bit_offset = (gpio_num % 10) * 3;
 
